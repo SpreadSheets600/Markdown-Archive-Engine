@@ -122,16 +122,21 @@ export function SearchPalette() {
                   className="flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2.5 text-sm outline-none data-[selected=true]:bg-accent"
                 >
                   {r.crumb.includes("/") ? (
-                    <FolderOpen className="mt-0.5 size-4 shrink-0 text-primary" />
+                    <FolderOpen className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                   ) : (
-                    <FileText className="mt-0.5 size-4 shrink-0 text-primary" />
+                    <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                   )}
-                  <span className="min-w-0">
+                  <span className="min-w-0 flex-1">
                     <span className="block truncate font-medium">{r.title}</span>
-                    <span
-                      className="mt-0.5 block truncate font-mono text-[11px] text-muted-foreground [&_mark]:rounded [&_mark]:bg-accent [&_mark]:px-0.5 [&_mark]:text-accent-foreground"
-                      dangerouslySetInnerHTML={{ __html: r.excerpt }}
-                    />
+                    {r.excerpt ? (
+                      <span
+                        className="mt-1 line-clamp-2 block text-xs leading-5 text-muted-foreground [&_mark]:rounded [&_mark]:bg-accent [&_mark]:px-0.5 [&_mark]:font-medium [&_mark]:text-accent-foreground"
+                        dangerouslySetInnerHTML={{ __html: r.excerpt }}
+                      />
+                    ) : null}
+                    <span className="mt-1 block truncate font-mono text-[11px] text-muted-foreground/70">
+                      {r.crumb}
+                    </span>
                   </span>
                 </a>
               </Command.Item>
