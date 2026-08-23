@@ -3,7 +3,7 @@
 # One-shot installer for the Markdown Archive engine.
 # Bootstraps a new content-only archive repository anywhere:
 #
-#   curl -fsSL https://raw.githubusercontent.com/SpreadSheets600/Operating-Systems-Programs/engine/install.sh | bash -s -- my-archive
+#   curl -fsSL https://raw.githubusercontent.com/SpreadSheets600/markdown-archive-engine/main/install.sh | bash -s -- my-archive
 #
 # or, from a checkout of this branch:
 #
@@ -11,8 +11,8 @@
 #
 set -euo pipefail
 
-REPO="${ARCHIVE_REPO:-SpreadSheets600/Operating-Systems-Programs}"
-ENGINE_BRANCH="${ARCHIVE_ENGINE_BRANCH:-engine}"
+REPO="${ARCHIVE_REPO:-SpreadSheets600/markdown-archive-engine}"
+ENGINE_BRANCH="${ARCHIVE_ENGINE_BRANCH:-main}"
 TARGET=""
 BASE_ARG=""
 URL_ARG=""

@@ -1,12 +1,12 @@
 # Markdown Archive — Site Engine
 
-This branch contains the **site engine only**: an Astro + React + shadcn/ui
-generator that turns a folder of Markdown into a polished documentation
-site. Your content never lives here.
+This repository contains the **site engine only**: an Astro + React +
+shadcn/ui generator that turns a folder of Markdown into a polished
+documentation site. Your content never lives here.
 
-- **`main` branch** → Markdown content + assets only
-- **`engine` branch** (this one) → the generator
-- **`gh-pages` branch** → build output, published by GitHub Actions
+- **Content repositories** → Markdown + assets on their `main` branch
+- **This repository** → the generator (`main`)
+- **`gh-pages` branches** → build output, published by GitHub Actions
 
 ## One-shot bootstrap (new project)
 
@@ -14,7 +14,7 @@ Scaffold a fresh archive repository anywhere:
 
 ```bash
 curl -fsSL \
-  https://raw.githubusercontent.com/SpreadSheets600/Operating-Systems-Programs/engine/install.sh \
+  https://raw.githubusercontent.com/SpreadSheets600/markdown-archive-engine/main/install.sh \
   | bash -s -- my-new-archive
 ```
 
@@ -62,11 +62,14 @@ template/workflow.yml CI workflow copied into new projects
 
 ## Reuse for other projects
 
-Any GitHub repo whose `main` holds Markdown can adopt this engine:
+Any GitHub repo whose `main` holds Markdown can use this engine as-is:
 
-1. Push this `engine` branch to your repo.
-2. Copy `template/workflow.yml` to `.github/workflows/docs.yml`.
-3. Enable GitHub Pages from the `gh-pages` branch.
+1. Copy `template/workflow.yml` into your repo as
+   `.github/workflows/docs.yml`.
+2. Enable GitHub Pages from the `gh-pages` branch.
+
+No engine copy needed — the workflow checks out this repository
+directly. Pin `ref:` to a tag (e.g. `v1`) to freeze the version.
 
 No content changes required — relative `.md` links between documents are
 rewritten automatically at build time.

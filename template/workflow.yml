@@ -16,13 +16,15 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out content (main branch)
+      - name: Check out content (this repository)
         uses: actions/checkout@v4
 
-      - name: Check out site engine (engine branch)
+      # Pin to a tag (e.g. v1) once you want to freeze the engine.
+      - name: Check out the site engine
         uses: actions/checkout@v4
         with:
-          ref: engine
+          repository: SpreadSheets600/markdown-archive-engine
+          ref: main
           path: engine
 
       - name: Set up Node.js
