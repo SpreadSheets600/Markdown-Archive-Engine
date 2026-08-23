@@ -89,8 +89,8 @@ export function SearchPalette() {
       <DialogContent aria-describedby={undefined} className="overflow-hidden p-0">
         <DialogTitle className="sr-only">Search the archive</DialogTitle>
         <Command shouldFilter={false}>
-          <div className="flex items-center gap-2.5 border-b border-border/60 px-3.5">
-            <Search className="size-3.5 shrink-0 text-muted-foreground" />
+          <div className="flex items-center gap-2.5 px-3.5">
+            <Search className="size-3 shrink-0 text-muted-foreground" />
             <Command.Input
               autoFocus
               value={query}
@@ -119,9 +119,9 @@ export function SearchPalette() {
                   className="flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2.5 text-sm outline-none data-[selected=true]:bg-accent"
                 >
                   {r.crumb.includes("/") ? (
-                    <FolderOpen className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+                    <FolderOpen className="mt-0.5 size-3 shrink-0 text-muted-foreground" />
                   ) : (
-                    <FileText className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+                    <FileText className="mt-0.5 size-3 shrink-0 text-muted-foreground" />
                   )}
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-medium">{r.title}</span>
