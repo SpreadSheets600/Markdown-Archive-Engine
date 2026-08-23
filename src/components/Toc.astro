@@ -1,0 +1,78 @@
+---
+/**
+ * "On this page" rail. Links are rendered statically; a small
+ * IntersectionObserver script highlights the active section.
+ */
+import { cn } from "@/lib/utils";
+
+export interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+export interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+---
+
+{
+  headings.length > 1 && (
+    <nav aria-label="On this page" class="text-[13px] leading-6">
+      <p class="mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        On this page
+      </p>
+      <ul id="toc-list" class="space-y-0.5 border-l border-border">
+        {headings
+          .filter((h) => h.depth <= 3)
+          .map((h) => (
+            <li>
+              <a
+                href={`#${h.slug}`}
+                data-toc-link={h.slug}
+                class={cn(
+                  "-ml-px block border-l border-transparent py-1 pl-4 text-muted-foreground transition-colors hover:text-foreground",
+                  h.depth === 2 && "",
+                  h.depth === 3 && "pl-7",
+                )}
+              >
+                {h.text}
+              </a>
+            </li>
+          ))}
+      </ul>
+    </nav>
+  )
+}
+
+<script>
+  const links = document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]");
+  if (links.length) {
+    const byId = new Map(
+      [...links].map((l) => [l.dataset.tocLink, l]),
+    );
+    const setActive = (id) => {
+      links.forEach((l) => {
+        l.classList.remove("border-primary", "text-foreground", "font-medium");
+        l.classList.add("text-muted-foreground");
+      });
+      const link = byId.get(id);
+      if (link) {
+        link.classList.add("border-primary", "text-foreground", "font-medium");
+        link.classList.remove("text-muted-foreground");
+      }
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries)
+          if (entry.isIntersecting) setActive(entry.target.id);
+      },
+      { rootMargin: "-15% 0px -70% 0px" },
+    );
+    document
+      .querySelectorAll(".doc-prose :where(h2, h3)[id]")
+      .forEach((h) => observer.observe(h));
+  }
+</script>

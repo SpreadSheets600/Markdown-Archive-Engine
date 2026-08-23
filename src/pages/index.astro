@@ -1,0 +1,70 @@
+---
+import Base from "@/layouts/Base.astro";
+import Toc from "@/components/Toc.astro";
+import AssetGrid from "@/components/AssetGrid.astro";
+import { getCollection, render } from "astro:content";
+import { FileText } from "lucide-react";
+import { SITE } from "@/lib/config";
+import { listAssets } from "@/lib/assets";
+
+const docs = await getCollection("docs");
+const home = docs.find((d) => /^readme(?:\.md)?$/i.test(d.id));
+if (!home) throw new Error("Root README.md missing — it renders the homepage.");
+
+const { Content, headings } = await render(home);
+
+const sessions = new Set(
+  docs.filter((d) => d.id.includes("/")).map((d) => d.id.split("/")[0]),
+);
+---
+
+<Base title={SITE.title} currentId="readme">
+  <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-8 sm:py-14">
+    <div class="mb-12 border-b border-border pb-10 sm:mb-16">
+      <span
+        class="mb-5 inline-flex h-7 items-center gap-2 rounded-md bg-secondary px-2.5 font-mono text-xs text-secondary-foreground"
+      >
+        <FileText class="size-3.5" />
+        README.md
+      </span>
+      <h1
+        class="max-w-3xl text-4xl font-bold tracking-tight text-balance sm:text-5xl"
+      >
+        {SITE.title}
+      </h1>
+      <p class="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
+        {SITE.description}
+      </p>
+      <dl class="mt-8 flex flex-wrap gap-x-12 gap-y-4">
+        <div>
+          <dt class="text-sm text-muted-foreground">Documents</dt>
+          <dd class="mt-1 text-2xl font-semibold tabular-nums">
+            {docs.length}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-muted-foreground">Sessions</dt>
+          <dd class="mt-1 text-2xl font-semibold tabular-nums">
+            {sessions.size}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-muted-foreground">Format</dt>
+          <dd class="mt-1 text-2xl font-semibold">Markdown</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="grid items-start gap-12 xl:grid-cols-[minmax(0,1fr)_15rem]">
+      <article class="doc-prose min-w-0 max-w-3xl">
+        <Content />
+        <AssetGrid assets={await listAssets()} dir="." />
+      </article>
+      <aside
+        class="sticky top-24 hidden max-h-[calc(100svh-7rem)] overflow-y-auto scroll-thin xl:block"
+      >
+        <Toc headings={headings.filter((h) => h.depth >= 2 && h.depth <= 3)} />
+      </aside>
+    </div>
+  </main>
+</Base>

@@ -1,0 +1,75 @@
+---
+/**
+ * Header: brand, search trigger, repo link and theme control.
+ * Sidebar toggles: hamburger (mobile) + collapse (desktop).
+ */
+import { Github, PanelLeft, Search } from "lucide-react";
+import { SITE } from "@/lib/config";
+import { withBase } from "@/lib/routes";
+import ThemeToggle from "@/components/ThemeToggle.tsx";
+
+export interface Props {
+  /** Root-relative path of the current page. */
+  route?: string;
+}
+
+const { route = "/" } = Astro.props;
+---
+
+<header class="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/80 px-4 backdrop-blur sm:px-6">
+  <button
+    id="sidebar-toggle-mobile"
+    aria-label="Open explorer"
+    class="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground lg:hidden"
+  >
+    <PanelLeft class="size-[18px]" />
+  </button>
+
+  <button
+    id="sidebar-toggle-desktop"
+    aria-label="Toggle explorer"
+    class="hidden h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground lg:inline-flex"
+  >
+    <PanelLeft class="size-[18px]" />
+  </button>
+
+  <a href={withBase("/")} class="flex min-w-0 items-center gap-2.5">
+    <span class="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
+      <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 17 6-6-6-6"/><path d="M12 19h8"/></svg>
+    </span>
+    <span class="truncate text-sm font-semibold tracking-tight">
+      {SITE.title}
+    </span>
+  </a>
+
+  <div class="ml-auto flex items-center gap-1.5">
+    <button
+      id="search-trigger"
+      type="button"
+      class="hidden h-8 items-center gap-2 rounded-md border border-input bg-transparent px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:flex"
+    >
+      <Search class="size-3.5" />
+      Search
+      <kbd class="ml-2 rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] font-medium">⌘K</kbd>
+    </button>
+    <button
+      id="search-trigger-mobile"
+      aria-label="Search"
+      class="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:hidden"
+    >
+      <Search class="size-[18px]" />
+    </button>
+
+    <a
+      href={SITE.repo}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="GitHub repository"
+      class="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+    >
+      <Github class="size-[18px]" />
+    </a>
+
+    <ThemeToggle client:load />
+  </div>
+</header>

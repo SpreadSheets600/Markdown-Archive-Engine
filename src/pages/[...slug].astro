@@ -1,0 +1,119 @@
+---
+import Base from "@/layouts/Base.astro";
+import Toc from "@/components/Toc.astro";
+import AssetGrid from "@/components/AssetGrid.astro";
+import { getCollection, render } from "astro:content";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { listAssets } from "@/lib/assets";
+import { labelForId, routeForDoc } from "@/lib/routes";
+
+export async function getStaticPaths() {
+  const docs = (await getCollection("docs"))
+    .filter((d) => !/^readme(?:.md)?$/i.test(d.id))
+    .sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
+  return docs.map((doc, i) => ({
+    params: { slug: routeForDoc(doc.id).slice(1) },
+    props: { doc, prev: docs[i - 1] ?? null, next: docs[i + 1] ?? null },
+  }));
+}
+
+const { doc, prev, next } = Astro.props;
+const { Content, headings } = await render(doc);
+
+const crumbs = doc.id.split("/");
+const dir = crumbs.length > 1 ? crumbs.slice(0, -1).join("/") : ".";
+const title =
+  doc.data.title ??
+  headings.find((h) => h.depth === 1)?.text ??
+  crumbs.at(-1).replace(/\.md$/i, "");
+---
+
+<Base title={title} description={doc.data.description} currentId={doc.id}>
+  <main class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-8 sm:py-14">
+    <!-- Breadcrumbs -->
+    <nav
+      aria-label="Breadcrumb"
+      class="mb-8 flex flex-wrap items-center gap-1.5 font-mono text-xs text-muted-foreground"
+    >
+      <a
+        href={import.meta.env.BASE_URL}
+        class="transition-colors hover:text-foreground"
+      >
+        ~
+      </a>
+      {
+        crumbs.map((part, i) => (
+          <span class="flex items-center gap-1.5">
+            <span class="text-muted-foreground/50" aria-hidden="true">/</span>
+            {i === crumbs.length - 1 ? (
+              <span class="text-foreground">
+                {i === 0
+                  ? part.replace(/\.md$/i, "")
+                  : title}
+              </span>
+            ) : (
+              <a
+                href={`${import.meta.env.BASE_URL}/${crumbs.slice(0, i + 1).join("/")}`}
+                class="transition-colors hover:text-foreground"
+              >
+                {part}/
+              </a>
+            )}
+          </span>
+        ))
+      }
+    </nav>
+
+    <div class="grid items-start gap-12 xl:grid-cols-[minmax(0,1fr)_15rem]">
+      <article class="doc-prose min-w-0 max-w-3xl">
+        <slot name="title-slot" />
+        <Content />
+        <AssetGrid assets={await listAssets()} dir={dir} />
+
+        {
+          (prev || next) && (
+            <nav
+              aria-label="Documents"
+              class="mt-16 grid gap-3 border-t border-border pt-8 sm:grid-cols-2"
+            >
+              {prev ? (
+                <a
+                  href={`${import.meta.env.BASE_URL}${routeForDoc(prev.id)}`}
+                  class="group rounded-lg border border-border p-4 transition-colors hover:bg-accent"
+                >
+                  <span class="flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                    <ChevronLeft class="size-3.5" /> Previous
+                  </span>
+                  <span class="mt-1.5 block truncate text-sm font-medium underline-offset-4 group-hover:underline">
+                    {labelForId(prev.id)}
+                  </span>
+                </a>
+              ) : (
+                <span aria-hidden="true" />
+              )}
+              {next && (
+                <a
+                  href={`${import.meta.env.BASE_URL}${routeForDoc(next.id)}`}
+                  class="group rounded-xl border border-border bg-card p-4 text-right transition-colors hover:border-primary/40 sm:col-start-2"
+                >
+                  <span class="flex items-center justify-end gap-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                    Next <ChevronRight class="size-3.5" />
+                  </span>
+                  <span class="mt-1.5 block truncate text-sm font-medium underline-offset-4 group-hover:underline">
+                    {labelForId(next.id)}
+                  </span>
+                </a>
+              )}
+            </nav>
+          )
+        }
+      </article>
+
+      <aside
+        class="sticky top-24 hidden max-h-[calc(100vh-7rem)] overflow-y-auto xl:block"
+      >
+        <Toc headings={headings.filter((h) => h.depth >= 2 && h.depth <= 3)} />
+      </aside>
+    </div>
+  </main>
+</Base>

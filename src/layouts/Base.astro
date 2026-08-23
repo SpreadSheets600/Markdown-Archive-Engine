@@ -1,0 +1,207 @@
+---
+import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
+import "@/styles/global.css";
+import Header from "@/components/Header.astro";
+import FileTree from "@/components/FileTree.astro";
+import SearchPalette from "@/components/SearchPalette.tsx";
+import { SITE } from "@/lib/config";
+import { buildTree } from "@/lib/archive";
+
+export interface Props {
+  /** Content-collection id of the current doc, for tree highlighting. */
+  currentId?: string;
+  title: string;
+  description?: string;
+}
+
+const { currentId, title, description = SITE.description } = Astro.props;
+const tree = await buildTree();
+
+/** Sets the theme class before first paint to avoid flashing. */
+const bootScript = `
+(() => {
+  try {
+    const saved = localStorage.getItem("archive-theme") || "system";
+    const dark =
+      saved === "dark" ||
+      (saved === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.classList.toggle("dark", dark);
+  } catch { document.documentElement.classList.remove("dark"); }
+})();
+`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+    <title>{title === SITE.title ? title : `${title} · ${SITE.title}`}</title>
+    <script is:inline set:html={bootScript} />
+  </head>
+  <body class="min-h-svh">
+    <!-- Desktop sidebar -->
+    <aside
+      id="sidebar-desktop"
+      class="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-background lg:flex"
+    >
+      <a
+        href={import.meta.env.BASE_URL}
+        class="flex h-14 shrink-0 items-center gap-2.5 border-b border-border px-4"
+      >
+        <span class="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
+          <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 17 6-6-6-6"/><path d="M12 19h8"/></svg>
+        </span>
+        <span class="min-w-0">
+          <span class="block truncate text-sm font-semibold tracking-tight">
+            {SITE.title}
+          </span>
+        </span>
+      </a>
+      <div class="scroll-thin flex-1 overflow-y-auto p-3">
+        <p class="mb-2 px-2 text-[13px] font-medium text-muted-foreground">
+          Explorer
+        </p>
+        <nav class="flex flex-col gap-0.5">
+          <FileTree tree={tree} currentId={currentId} />
+        </nav>
+      </div>
+      <div class="shrink-0 border-t border-border px-4 py-3">
+        <p class="text-xs text-muted-foreground">
+          Markdown-first archive
+        </p>
+      </div>
+    </aside>
+
+    <!-- Mobile sidebar (sheet) -->
+    <div id="sidebar-mobile" aria-hidden="true" class="fixed inset-0 z-50 hidden lg:hidden">
+      <div
+        data-sheet-overlay
+        class="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-200"
+      >
+      </div>
+      <div
+        data-sheet-panel
+        role="dialog"
+        aria-label="Explorer"
+        class="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] -translate-x-full flex-col border-r border-border bg-background shadow-xl transition-transform duration-200"
+      >
+        <div class="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
+          <span class="flex items-center gap-2.5">
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 17 6-6-6-6"/><path d="M12 19h8"/></svg>
+            </span>
+            <span class="text-sm font-semibold tracking-tight">{SITE.title}</span>
+          </span>
+          <button
+            id="sidebar-close"
+            aria-label="Close explorer"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="scroll-thin flex-1 overflow-y-auto p-3">
+          <p class="mb-2 px-2 text-[13px] font-medium text-muted-foreground">Explorer</p>
+          <nav class="flex flex-col gap-0.5">
+            <FileTree tree={tree} currentId={currentId} />
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div id="main-shell" class="flex min-h-svh flex-col lg:pl-64">
+      <Header route={currentId ? `/${currentId}` : "/"} />
+      <slot />
+      <footer class="border-t border-border py-6">
+        <p class="text-center text-xs text-muted-foreground">
+          {SITE.title} · Built with Astro &amp; shadcn/ui
+        </p>
+      </footer>
+    </div>
+
+    <SearchPalette client:idle />
+
+    <script is:inline>
+      (() => {
+        /* Desktop sidebar collapse (persisted) */
+        const shell = document.getElementById("main-shell");
+        const aside = document.getElementById("sidebar-desktop");
+        const toggleBtn = document.getElementById("sidebar-toggle-desktop");
+        if (shell && aside && toggleBtn) {
+          let collapsed = localStorage.getItem("archive-sidebar") === "collapsed";
+          const render = () => {
+            aside.style.display = collapsed ? "none" : "";
+            shell.style.paddingLeft = collapsed ? "0" : "";
+          };
+          render();
+          toggleBtn.addEventListener("click", () => {
+            collapsed = !collapsed;
+            localStorage.setItem(
+              "archive-sidebar",
+              collapsed ? "collapsed" : "expanded",
+            );
+            render();
+          });
+        }
+
+        /* Mobile sheet */
+        const sheet = document.getElementById("sidebar-mobile");
+        if (sheet) {
+          const panel = sheet.querySelector("[data-sheet-panel]");
+          const overlay = sheet.querySelector("[data-sheet-overlay]");
+          let open = false;
+          const render = () => {
+            sheet.classList.toggle("hidden", !open);
+            sheet.setAttribute("aria-hidden", String(!open));
+            document.body.style.overflow = open ? "hidden" : "";
+            requestAnimationFrame(() => {
+              overlay.style.opacity = open ? "1" : "0";
+              panel.style.transform = open ? "translateX(0)" : "-100%";
+            });
+          };
+          document
+            .getElementById("sidebar-toggle-mobile")
+            ?.addEventListener("click", () => {
+              open = true;
+              render();
+            });
+          const close = () => {
+            open = false;
+            render();
+          };
+          document.getElementById("sidebar-close")?.addEventListener("click", close);
+          overlay.addEventListener("click", close);
+          sheet.querySelectorAll("a").forEach((a) => a.addEventListener("click", close));
+          window.addEventListener("keydown", (e) => e.key === "Escape" && open && close());
+        }
+
+        /* Copy buttons on code panes */
+        document.querySelectorAll(".doc-prose .astro-code").forEach((block) => {
+          const btn = document.createElement("button");
+          btn.className =
+            "code-copy inline-flex h-7 items-center rounded-md border border-border bg-background px-2 font-mono text-[11px] text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground";
+          btn.textContent = "Copy";
+          block.appendChild(btn);
+          block.addEventListener("mouseenter", () => (btn.style.opacity = "1"));
+          block.addEventListener("mouseleave", () => {
+            btn.style.opacity = "0";
+            btn.textContent = "Copy";
+          });
+          btn.addEventListener("click", async () => {
+            try {
+              await navigator.clipboard.writeText(
+                block.querySelector("code")?.innerText ?? "",
+              );
+              btn.textContent = "Copied!";
+              setTimeout(() => (btn.textContent = "Copy"), 1400);
+            } catch {}
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

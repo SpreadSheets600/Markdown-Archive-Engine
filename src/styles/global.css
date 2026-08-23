@@ -1,0 +1,210 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/*
+ * Pure shadcn/ui design tokens (neutral base theme).
+ * Light + dark via the `.dark` class on <html>.
+ */
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", monospace;
+
+  --color-zinc-50: #fafafa;
+  --color-zinc-100: #f4f4f5;
+  --color-zinc-200: #e4e4e7;
+  --color-zinc-300: #d4d4d8;
+  --color-zinc-400: #a1a1aa;
+  --color-zinc-500: #71717a;
+  --color-zinc-600: #52525b;
+  --color-zinc-700: #3f3f46;
+  --color-zinc-800: #27272a;
+  --color-zinc-850: #1c1c1f;
+  --color-zinc-900: #18181b;
+  --color-zinc-950: #09090b;
+}
+
+/* ── shadcn/ui semantic tokens (neutral) ─────────────────────── */
+:root {
+  --background: #ffffff;
+  --foreground: #09090b;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+  --primary: #18181b;
+  --primary-foreground: #fafafa;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #dc2626;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #a1a1aa;
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #09090b;
+  --card-foreground: #fafafa;
+  --popover: #18181b;
+  --popover-foreground: #fafafa;
+  --primary: #fafafa;
+  --primary-foreground: #18181b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #d4d4d8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  @apply bg-background text-foreground font-sans antialiased;
+}
+
+::selection {
+  @apply bg-foreground/10;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Thin scrollbars in scroll regions */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* ── Document prose ──────────────────────────────────────────── */
+.doc-prose {
+  @apply text-[15px] leading-7 text-foreground/90 sm:text-base sm:leading-[1.85];
+}
+.doc-prose :where(h1, h2, h3, h4) {
+  @apply font-semibold tracking-tight text-foreground text-balance;
+}
+.doc-prose :where(h2:not(.doc-title)) {
+  @apply mt-12 scroll-mt-24 pb-2 text-xl sm:text-2xl;
+}
+.doc-prose :where(h3) {
+  @apply mt-10 scroll-mt-24 text-lg sm:text-xl;
+}
+.doc-prose :where(h4) {
+  @apply mt-8 scroll-mt-24 text-base;
+}
+.doc-prose :where(p) {
+  @apply my-5;
+}
+.doc-prose :where(ul) {
+  @apply my-5 list-disc space-y-1.5 ps-6 marker:text-muted-foreground;
+}
+.doc-prose :where(ol) {
+  @apply my-5 list-decimal space-y-1.5 ps-6 marker:text-muted-foreground;
+}
+.doc-prose :where(a:not(.no-underline)) {
+  @apply font-medium underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground;
+}
+.doc-prose :where(blockquote) {
+  @apply my-6 border-l-2 border-border pl-4 text-muted-foreground italic;
+}
+.doc-prose :where(blockquote p) {
+  @apply my-3;
+}
+.doc-prose :where(hr) {
+  @apply my-10 border-border;
+}
+.doc-prose :where(img) {
+  @apply my-7 h-auto max-w-full rounded-lg border border-border;
+}
+.doc-prose :where(table) {
+  @apply my-6 w-full border-collapse text-sm;
+}
+.doc-prose :where(th) {
+  @apply border-b border-border px-3.5 py-2.5 text-start font-medium text-muted-foreground;
+}
+.doc-prose :where(td) {
+  @apply border-b border-border px-3.5 py-2.5 align-top;
+}
+.doc-prose :where(code):not(pre code) {
+  @apply rounded-md bg-muted px-[0.35em] py-[0.15em] font-mono text-[0.85em] font-medium;
+}
+
+/* ── Code blocks (Shiki output) ───────────────────────────────── */
+.doc-prose .astro-code {
+  position: relative;
+  margin-block: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.doc-prose .astro-code pre,
+.doc-prose .astro-code > code {
+  margin: 0;
+  padding: 1rem 1.15rem;
+  overflow-x: auto;
+  background: transparent !important;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.75;
+}
+.dark .doc-prose .astro-code,
+.dark .doc-prose .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: transparent !important;
+}
+html:not(.dark) .doc-prose .astro-code,
+html:not(.dark) .doc-prose .astro-code span {
+  color: var(--shiki-light) !important;
+  background-color: transparent !important;
+}
+
+/* Copy button injected per pane */
+.code-copy {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
