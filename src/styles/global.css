@@ -173,41 +173,63 @@ body {
   @apply rounded-md bg-muted px-[0.35em] py-[0.15em] font-mono text-[0.85em] font-medium;
 }
 
-/* ── Code blocks (Shiki output) ───────────────────────────────── */
+/* ── Code blocks (Shiki output) ─────────────────────────────────
+ * Astro emits light-theme colors as inline styles plus a
+ * `--shiki-dark` variable and `github-light github-dark` classes.
+ * Light mode therefore needs NO overrides; dark mode switches the
+ * palette through the variables below. */
 .doc-prose .astro-code {
   position: relative;
+  display: flow-root;
   margin-block: 1.75rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
 }
-.doc-prose .astro-code pre,
-.doc-prose .astro-code > code {
+.doc-prose .astro-code > pre {
   margin: 0;
-  padding: 1rem 1.15rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.doc-prose .astro-code > code {
+  display: block;
+  margin: 0;
+  padding: 0.9rem 3.25rem 1rem 1.15rem; /* right padding keeps clear of Copy */
   overflow-x: auto;
   background: transparent !important;
   font-family: var(--font-mono);
   font-size: 13px;
-  line-height: 1.75;
+  line-height: 1.7;
+  white-space: pre;               /* never wrap a code line */
+  tab-size: 4;
+  font-variant-ligatures: none;   /* keep -> != etc. as typed */
+  font-feature-settings: normal;
+  -webkit-font-smoothing: antialiased;
 }
-.dark .doc-prose .astro-code,
+.dark .doc-prose .astro-code {
+  background-color: var(--shiki-dark-bg, #24292e) !important;
+  border-color: var(--border);
+}
 .dark .doc-prose .astro-code span {
   color: var(--shiki-dark) !important;
   background-color: transparent !important;
-}
-html:not(.dark) .doc-prose .astro-code,
-html:not(.dark) .doc-prose .astro-code span {
-  color: var(--shiki-light) !important;
-  background-color: transparent !important;
+  font-weight: var(--shiki-dark-font-weight, inherit);
 }
 
-/* Copy button injected per pane */
+/* Copy button injected per pane — pure CSS show/hide */
 .code-copy {
   position: absolute;
   top: 8px;
   right: 8px;
   z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.doc-prose .astro-code:hover .code-copy,
+.code-copy:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* ── Mobile sheet panel ───────────────────────────────────────── */
