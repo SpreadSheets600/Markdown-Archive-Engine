@@ -22,15 +22,28 @@ export function SearchPalette() {
       }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    const onOpen = () => setOpen(true);
+    window.addEventListener("archive:open-search", onOpen);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("archive:open-search", onOpen);
+    };
   }, []);
 
   useEffect(() => {
     if (!open || pagefindRef.current) return;
-    import(`${BASE}/pagefind/pagefind.js`)
-      .then((pf) => pf.default({ basePath: `${BASE}/pagefind/` }))
-      .then((pf) => (pagefindRef.current = pf))
-      .catch(() => (pagefindRef.current = false));
+    // @vite-ignore keeps this a native runtime import — Vite's preload
+    // wrapper mangles fully-dynamic URLs like this one.
+    import(/* @vite-ignore */ `${BASE}/pagefind/pagefind.js`)
+      .then(async (pf) => {
+        // Pagefind >=1.4 exports named API (no default export).
+        await pf.options?.({ basePath: `${BASE}/pagefind/` });
+        pagefindRef.current = pf;
+      })
+      .catch((err) => {
+        console.warn("Pagefind failed to load:", err);
+        pagefindRef.current = false;
+      });
   }, [open]);
 
   useEffect(() => {
