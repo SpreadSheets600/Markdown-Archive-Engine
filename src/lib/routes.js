@@ -18,7 +18,7 @@ export const withBase = (p) => `${BASE}${p}`;
 export function routeForDoc(id) {
   const stem = id.replace(/\.(?:md|markdown)$/i, "");
   if (/(^|\/)readme$/i.test(stem)) {
-    const dir = stem.replace(/\/readme$/i, "").replace(/\/+$/, "");
+    const dir = stem.replace(/(^|\/)readme$/i, "").replace(/\/+$/, "");
     return dir ? `/${dir}` : "/";
   }
   return `/${stem.replace(/\/+$/, "")}`;
