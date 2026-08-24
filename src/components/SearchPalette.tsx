@@ -1,16 +1,30 @@
 import { useEffect, useRef, useState } from "react";
-import { Command } from "cmdk";
-import { FileText, FolderOpen, Search } from "lucide-react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  ArrowRight,
+  FileText,
+  FolderOpen,
+  Loader2,
+} from "lucide-react";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandShortcut,
+} from "@/components/ui/command";
 import { BASE } from "@/lib/routes";
 
 /**
  * ⌘K palette backed by a Pagefind index generated at build time.
  * Pagefind ships zero search payload until the dialog is opened.
+ * Built from the shadcn/ui Command primitives (ui/command.tsx).
  */
 export function SearchPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const pagefindRef = useRef(null);
 
@@ -50,6 +64,7 @@ export function SearchPalette() {
     if (!open) {
       setQuery("");
       setResults([]);
+      setLoading(false);
       return;
     }
   }, [open]);
@@ -60,21 +75,27 @@ export function SearchPalette() {
       const pf = pagefindRef.current;
       if (!query.trim() || !pf) {
         setResults([]);
+        setLoading(false);
         return;
       }
-      const search = await pf.search(query);
-      const hits = await Promise.all(
-        search.results.slice(0, 10).map((r) => r.data()),
-      );
-      if (!cancelled)
-        setResults(
-          hits.map((hit) => ({
-            url: hit.url.startsWith(BASE) ? hit.url : `${BASE}${hit.url}`,
-            title: hit.meta?.title ?? "Untitled",
-            excerpt: hit.excerpt_text ?? hit.excerpt ?? "",
-            crumb: hit.meta?.crumb ?? new URL(hit.url, "http://x").pathname,
-          })),
+      setLoading(true);
+      try {
+        const search = await pf.search(query);
+        const hits = await Promise.all(
+          search.results.slice(0, 10).map((r) => r.data()),
         );
+        if (!cancelled)
+          setResults(
+            hits.map((hit) => ({
+              url: hit.url.startsWith(BASE) ? hit.url : `${BASE}${hit.url}`,
+              title: hit.meta?.title ?? "Untitled",
+              excerpt: hit.excerpt_text ?? hit.excerpt ?? "",
+              crumb: hit.meta?.crumb ?? new URL(hit.url, "http://x").pathname,
+            })),
+          );
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     };
     // Small debounce keeps typing smooth while indexing locally.
     const t = setTimeout(run, 90);
@@ -84,44 +105,44 @@ export function SearchPalette() {
     };
   }, [query]);
 
+  const indexUnavailable = pagefindRef.current === false;
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent aria-describedby={undefined} className="overflow-hidden p-0">
-        <DialogTitle className="sr-only">Search the archive</DialogTitle>
-        <Command shouldFilter={false}>
-          <div className="flex items-center gap-2.5 px-3.5">
-            <Search className="size-3 shrink-0 text-muted-foreground" />
-            <Command.Input
-              autoFocus
-              value={query}
-              onValueChange={setQuery}
-              placeholder="Search documents…"
-              className="h-11 w-full bg-transparent pr-9 text-sm outline-none placeholder:text-muted-foreground"
-            />
-          </div>
-          <Command.List className="max-h-80 overflow-y-auto p-2">
-            <Command.Empty className="px-3 py-6 text-center text-sm text-muted-foreground">
-              {pagefindRef.current === false
-                ? "Search index unavailable."
-                : query.trim()
-                  ? "No matching documents."
-                  : "Type to search every lab record."}
-            </Command.Empty>
+    <CommandDialog
+      title="Search the archive"
+      open={open}
+      onOpenChange={setOpen}
+    >
+      <CommandInput
+        value={query}
+        onValueChange={setQuery}
+        placeholder="Search documents…"
+      />
+      <CommandList className="max-h-80">
+        <CommandEmpty>
+          {indexUnavailable
+            ? "Search index unavailable."
+            : loading
+              ? "Searching…"
+              : query.trim()
+                ? "No matching documents."
+                : "Type to search every lab record."}
+        </CommandEmpty>
+
+        {results.length > 0 && (
+          <CommandGroup heading={loading ? "Documents — searching…" : "Documents"}>
             {results.map((r) => (
-              <Command.Item
+              <CommandItem
                 key={r.url}
                 value={`${r.title} ${r.crumb}`}
                 onSelect={() => (window.location.href = r.url)}
                 asChild
               >
-                <a
-                  href={r.url}
-                  className="flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2.5 text-sm outline-none data-[selected=true]:bg-accent"
-                >
+                <a href={r.url}>
                   {r.crumb.includes("/") ? (
-                    <FolderOpen className="mt-0.5 size-3 shrink-0 text-muted-foreground" />
+                    <FolderOpen className="mt-0.5" />
                   ) : (
-                    <FileText className="mt-0.5 size-3 shrink-0 text-muted-foreground" />
+                    <FileText className="mt-0.5" />
                   )}
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-medium">{r.title}</span>
@@ -135,13 +156,37 @@ export function SearchPalette() {
                       {r.crumb}
                     </span>
                   </span>
+                  <ArrowRight className="mt-1 opacity-0 transition-opacity group-data-[selected=true]:opacity-100" />
                 </a>
-              </Command.Item>
+              </CommandItem>
             ))}
-          </Command.List>
-        </Command>
-      </DialogContent>
-    </Dialog>
+          </CommandGroup>
+        )}
+
+      </CommandList>
+
+      {/* Footer hints, shadcn search-dialog style */}
+      <div className="flex items-center gap-4 border-t px-4 py-2.5 text-[11px] text-muted-foreground">
+        {loading ? (
+          <span className="inline-flex items-center gap-1.5">
+            <Loader2 className="size-3 animate-spin" />
+            Searching…
+          </span>
+        ) : (
+          <>
+            <span className="inline-flex items-center gap-1.5">
+              <kbd className="rounded border bg-muted px-1 font-mono">↑↓</kbd>
+              Navigate
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <kbd className="rounded border bg-muted px-1 font-mono">↵</kbd>
+              Open
+            </span>
+          </>
+        )}
+        <CommandShortcut>ESC to close</CommandShortcut>
+      </div>
+    </CommandDialog>
   );
 }
 
