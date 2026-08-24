@@ -113,6 +113,11 @@ body {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
+/* The search palette input is auto-focused on open; the global ring
+   reads as a stray border box around the placeholder. Suppress it. */
+[data-slot="command-input"]:focus-visible {
+  outline: none;
+}
 
 /* Thin scrollbars in scroll regions */
 .scroll-thin {
