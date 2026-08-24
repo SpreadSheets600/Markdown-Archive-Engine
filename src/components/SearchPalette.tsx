@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
+  CircleNotch,
   FileText,
   FolderOpen,
-  Loader2,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -19,7 +19,7 @@ import { BASE } from "@/lib/routes";
 /**
  * ⌘K palette backed by a Pagefind index generated at build time.
  * Pagefind ships zero search payload until the dialog is opened.
- * Built from the shadcn/ui Command primitives (ui/command.tsx).
+ * Composed from the shadcn/ui Command primitives (ui/command.tsx).
  */
 export function SearchPalette() {
   const [open, setOpen] = useState(false);
@@ -46,7 +46,7 @@ export function SearchPalette() {
 
   useEffect(() => {
     if (!open || pagefindRef.current) return;
-    // @vite-ignore keeps this a native runtime import — Vite's preload
+    // @vite-ignore keeps this a native runtime import - Vite's preload
     // wrapper mangles fully-dynamic URLs like this one.
     import(/* @vite-ignore */ `${BASE}/pagefind/pagefind.js`)
       .then(async (pf) => {
@@ -116,21 +116,26 @@ export function SearchPalette() {
       <CommandInput
         value={query}
         onValueChange={setQuery}
-        placeholder="Search documents…"
+        placeholder="Type a command or search..."
       />
       <CommandList className="max-h-80">
         <CommandEmpty>
-          {indexUnavailable
-            ? "Search index unavailable."
-            : loading
-              ? "Searching…"
-              : query.trim()
-                ? "No matching documents."
-                : "Type to search every lab record."}
+          {indexUnavailable ? (
+            "Search index unavailable."
+          ) : loading ? (
+            <span className="inline-flex items-center gap-1.5">
+              <CircleNotch className="size-4 animate-spin" />
+              Searching...
+            </span>
+          ) : query.trim() ? (
+            "No results found."
+          ) : (
+            "Type to search every lab record."
+          )}
         </CommandEmpty>
 
         {results.length > 0 && (
-          <CommandGroup heading={loading ? "Documents — searching…" : "Documents"}>
+          <CommandGroup heading={loading ? "Documents - searching..." : "Documents"}>
             {results.map((r) => (
               <CommandItem
                 key={r.url}
@@ -140,9 +145,9 @@ export function SearchPalette() {
               >
                 <a href={r.url}>
                   {r.crumb.includes("/") ? (
-                    <FolderOpen className="mt-0.5" />
+                    <FolderOpen className="mt-0.5" aria-hidden="true" />
                   ) : (
-                    <FileText className="mt-0.5" />
+                    <FileText className="mt-0.5" aria-hidden="true" />
                   )}
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-medium">{r.title}</span>
@@ -156,34 +161,24 @@ export function SearchPalette() {
                       {r.crumb}
                     </span>
                   </span>
-                  <ArrowRight className="mt-1 opacity-0 transition-opacity group-data-[selected=true]:opacity-100" />
+                  <ArrowRight className="opacity-0 transition-opacity group-data-[selected=true]:opacity-100" />
                 </a>
               </CommandItem>
             ))}
           </CommandGroup>
         )}
-
       </CommandList>
 
       {/* Footer hints, shadcn search-dialog style */}
-      <div className="flex items-center gap-4 border-t px-4 py-2.5 text-[11px] text-muted-foreground">
-        {loading ? (
-          <span className="inline-flex items-center gap-1.5">
-            <Loader2 className="size-3 animate-spin" />
-            Searching…
-          </span>
-        ) : (
-          <>
-            <span className="inline-flex items-center gap-1.5">
-              <kbd className="rounded border bg-muted px-1 font-mono">↑↓</kbd>
-              Navigate
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <kbd className="rounded border bg-muted px-1 font-mono">↵</kbd>
-              Open
-            </span>
-          </>
-        )}
+      <div className="flex items-center gap-3 border-t px-4 py-2 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-1.5">
+          <kbd className="rounded border bg-muted px-1 font-mono">↑↓</kbd>
+          Navigate
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <kbd className="rounded border bg-muted px-1 font-mono">↵</kbd>
+          Open
+        </span>
         <CommandShortcut>ESC to close</CommandShortcut>
       </div>
     </CommandDialog>
