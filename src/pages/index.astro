@@ -16,7 +16,7 @@ const { Content, headings } = await render(home);
 <Base title={SITE.title} currentId="readme">
   <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-8 sm:py-14">
     <div class="grid items-start gap-12 xl:grid-cols-[minmax(0,1fr)_15rem]">
-      <article class="doc-prose min-w-0 max-w-3xl">
+      <article class="doc-prose home-doc min-w-0 max-w-3xl">
         <Content />
         <AssetGrid assets={await listAssets()} dir="." />
       </article>

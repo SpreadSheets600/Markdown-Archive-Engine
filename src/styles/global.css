@@ -113,6 +113,7 @@ body {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
+
 /* The search palette input is auto-focused on open; the global ring
    reads as a stray border box around the placeholder. Suppress it. */
 [data-slot="command-input"]:focus-visible {
@@ -196,6 +197,10 @@ body {
 /* ── Document prose ──────────────────────────────────────────── */
 .doc-prose {
   @apply text-[15px] leading-7 text-foreground/90 sm:text-base sm:leading-[1.85];
+}
+/* Homepage: the root README is the page - give its title real weight. */
+.doc-prose.home-doc :where(h1:first-child) {
+  @apply mt-2 mb-6 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl;
 }
 .doc-prose :where(h1, h2, h3, h4) {
   @apply font-semibold tracking-tight text-foreground text-balance;
