@@ -27,6 +27,9 @@ const bootScript = `
       saved === "dark" ||
       (saved === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
     document.documentElement.classList.toggle("dark", dark);
+    if (localStorage.getItem("archive-sidebar") === "collapsed") {
+      document.documentElement.classList.add("sidebar-collapsed");
+    }
   } catch { document.documentElement.classList.remove("dark"); }
 })();
 `;
@@ -124,18 +127,16 @@ const bootScript = `
         const toggleBtn = document.getElementById("sidebar-toggle-desktop");
         if (shell && aside && toggleBtn) {
           let collapsed = localStorage.getItem("archive-sidebar") === "collapsed";
-          const render = () => {
-            aside.style.display = collapsed ? "none" : "";
-            shell.style.paddingLeft = collapsed ? "0" : "";
-          };
-          render();
+          // CSS (html.sidebar-collapsed) animates the slide; JS only flips
+          // the class so both open and close transitions run.
+          document.documentElement.classList.toggle("sidebar-collapsed", collapsed);
           toggleBtn.addEventListener("click", () => {
             collapsed = !collapsed;
             localStorage.setItem(
               "archive-sidebar",
               collapsed ? "collapsed" : "expanded",
             );
-            render();
+            document.documentElement.classList.toggle("sidebar-collapsed", collapsed);
           });
         }
 
@@ -145,14 +146,29 @@ const bootScript = `
           const panel = sheet.querySelector("[data-sheet-panel]");
           const overlay = sheet.querySelector("[data-sheet-overlay]");
           let open = false;
+          let hideTimer;
           const render = () => {
-            sheet.classList.toggle("hidden", !open);
             sheet.setAttribute("aria-hidden", String(!open));
             document.body.style.overflow = open ? "hidden" : "";
-            requestAnimationFrame(() => {
-              overlay.style.opacity = open ? "1" : "0";
-              panel.style.transform = open ? "translateX(0)" : "-100%";
-            });
+            clearTimeout(hideTimer);
+            // Slide position lives in CSS ([data-sheet-panel][data-open]);
+            // JS only flips the attribute so both directions transition.
+            if (open) {
+              sheet.classList.remove("hidden");
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  overlay.style.opacity = "1";
+                  panel.setAttribute("data-open", "true");
+                });
+              });
+            } else {
+              overlay.style.opacity = "0";
+              panel.removeAttribute("data-open");
+              // Hide only after the slide-out finishes (250ms transition).
+              hideTimer = setTimeout(() => {
+                if (!open) sheet.classList.add("hidden");
+              }, 300);
+            }
           };
           document
             .getElementById("sidebar-toggle-mobile")

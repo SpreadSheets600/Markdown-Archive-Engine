@@ -318,3 +318,21 @@ body {
 [data-sheet-panel][data-open="true"] {
   transform: translateX(0);
 }
+
+/* ── Desktop sidebar collapse ─────────────────────────────────── */
+/* JS toggles html.sidebar-collapsed; CSS animates both directions. */
+@media (min-width: 1024px) {
+  #sidebar-desktop {
+    transition: translate 0.3s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.3s;
+  }
+  #main-shell {
+    transition: padding-left 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .sidebar-collapsed #sidebar-desktop {
+    translate: -100% 0;
+    visibility: hidden;
+  }
+  .sidebar-collapsed #main-shell {
+    padding-left: 0;
+  }
+}
