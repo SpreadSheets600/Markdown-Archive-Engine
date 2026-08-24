@@ -97,7 +97,7 @@ const href = (p) => {
       <p class="mb-5 text-sm text-muted-foreground">
         Attachments that ship next to this document.
       </p>
-      <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <ul class="asset-grid grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {siblings.map((asset) => {
           const pres = REGISTRY[asset.ext.toLowerCase()] ?? GENERIC;
           const Icon = pres.icon;

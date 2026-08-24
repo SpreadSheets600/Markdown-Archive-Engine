@@ -9,10 +9,10 @@ export const DialogTitle = DialogPrimitive.Title;
 export function DialogContent({ className, children, ...props }) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out" />
+      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out fade-in-0 fade-out" />
       <DialogPrimitive.Content
         className={cn(
-          "fixed left-1/2 top-24 z-50 w-full max-w-xl -translate-x-1/2 rounded-xl border border-border bg-popover text-popover-foreground shadow-2xl outline-none",
+          "fixed left-1/2 top-24 z-50 w-full max-w-xl -translate-x-1/2 rounded-xl border border-border bg-popover text-popover-foreground shadow-2xl outline-none data-[state=open]:animate-in data-[state=closed]:animate-out duration-150 fade-in-0 zoom-in-95 slide-in-from-top-2 fade-out zoom-out-95",
           className,
         )}
         {...props}

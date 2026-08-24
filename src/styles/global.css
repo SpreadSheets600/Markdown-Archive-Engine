@@ -125,6 +125,74 @@ body {
   scrollbar-color: var(--border) transparent;
 }
 
+/* ── Motion ───────────────────────────────────────────────────── */
+
+/* Gentle page entrance on every navigation (static site = full reload). */
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+main {
+  animation: page-in 0.35s ease both;
+}
+
+/* Smooth theme swap instead of a hard cut. */
+body {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Search palette results cascade in while the wasm index resolves. */
+@keyframes cmdk-item-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+[data-slot="command-list"] [cmdk-item] {
+  animation: cmdk-item-in 0.22s ease both;
+}
+[data-slot="command-list"] [cmdk-item]:nth-child(2) { animation-delay: 30ms; }
+[data-slot="command-list"] [cmdk-item]:nth-child(3) { animation-delay: 60ms; }
+[data-slot="command-list"] [cmdk-item]:nth-child(n + 4) { animation-delay: 90ms; }
+
+/* Asset cards rise into place, staggered per column position. */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+.asset-grid > li {
+  animation: card-in 0.3s ease both;
+}
+.asset-grid > li:nth-child(2) { animation-delay: 50ms; }
+.asset-grid > li:nth-child(3) { animation-delay: 100ms; }
+.asset-grid > li:nth-child(n + 4) { animation-delay: 150ms; }
+@media (prefers-reduced-motion: reduce) {
+  main,
+  [data-slot="command-list"] [cmdk-item],
+  .asset-grid > li {
+    animation: none;
+  }
+  body {
+    transition: none;
+  }
+}
+
 /* ── Document prose ──────────────────────────────────────────── */
 .doc-prose {
   @apply text-[15px] leading-7 text-foreground/90 sm:text-base sm:leading-[1.85];
