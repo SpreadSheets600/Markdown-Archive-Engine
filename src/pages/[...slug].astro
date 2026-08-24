@@ -3,7 +3,7 @@ import Base from "@/layouts/Base.astro";
 import Toc from "@/components/Toc.astro";
 import AssetGrid from "@/components/AssetGrid.astro";
 import { getCollection, render } from "astro:content";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { listAssets } from "@/lib/assets";
 import { labelForId, routeForDoc } from "@/lib/routes";
 
@@ -82,7 +82,7 @@ const title =
                   class="group rounded-lg border border-border p-4 transition-colors hover:bg-accent"
                 >
                   <span class="flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                    <ChevronLeft class="size-3.5" /> Previous
+                    <CaretLeft className="size-3.5" weight="bold" aria-hidden="true" /> Previous
                   </span>
                   <span class="mt-1.5 block truncate text-sm font-medium underline-offset-4 group-hover:underline">
                     {labelForId(prev.id)}
@@ -97,7 +97,7 @@ const title =
                   class="group rounded-xl border border-border bg-card p-4 text-right transition-colors hover:border-primary/40 sm:col-start-2"
                 >
                   <span class="flex items-center justify-end gap-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                    Next <ChevronRight class="size-3.5" />
+                    Next <CaretRight className="size-3.5" weight="bold" aria-hidden="true" />
                   </span>
                   <span class="mt-1.5 block truncate text-sm font-medium underline-offset-4 group-hover:underline">
                     {labelForId(next.id)}

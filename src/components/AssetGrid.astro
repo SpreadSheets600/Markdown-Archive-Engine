@@ -1,20 +1,21 @@
 ---
 /**
  * Rich previews for files that sit beside a document. The registry
- * below decides how each extension is presented — add an entry to
+ * below decides how each extension is presented - add an entry to
  * teach the site a new file format.
  */
 import {
-  FileArchive,
   FileCode,
-  FileJson,
-  FileSpreadsheet,
+  FileCsv,
+  FilePdf,
   FileText,
-  FileType2,
-  Film,
+  FileXls,
+  FileZip,
+  FilmStrip,
   Image as ImageIcon,
-  Music,
-} from "lucide-react";
+  MusicNotes,
+  BracketsCurly,
+} from "@phosphor-icons/react";
 
 export interface Asset {
   /** Path relative to the repository root. */
@@ -50,22 +51,22 @@ const REGISTRY: Record<string, Presentation> = {
   gif: { icon: ImageIcon, tone: "text-muted-foreground", preview: "image" },
   webp: { icon: ImageIcon, tone: "text-muted-foreground", preview: "image" },
   svg: { icon: ImageIcon, tone: "text-muted-foreground", preview: "image" },
-  pdf: { icon: FileType2, tone: "text-muted-foreground", preview: "none" },
-  csv: { icon: FileSpreadsheet, tone: "text-muted-foreground", preview: "none" },
-  xlsx: { icon: FileSpreadsheet, tone: "text-muted-foreground", preview: "none" },
-  json: { icon: FileJson, tone: "text-muted-foreground", preview: "none" },
+  pdf: { icon: FilePdf, tone: "text-muted-foreground", preview: "none" },
+  csv: { icon: FileCsv, tone: "text-muted-foreground", preview: "none" },
+  xlsx: { icon: FileXls, tone: "text-muted-foreground", preview: "none" },
+  json: { icon: BracketsCurly, tone: "text-muted-foreground", preview: "none" },
   c: { icon: FileCode, tone: "text-muted-foreground", preview: "none" },
   h: { icon: FileCode, tone: "text-muted-foreground", preview: "none" },
   cpp: { icon: FileCode, tone: "text-muted-foreground", preview: "none" },
   sh: { icon: FileCode, tone: "text-muted-foreground", preview: "none" },
   py: { icon: FileCode, tone: "text-muted-foreground", preview: "none" },
-  zip: { icon: FileArchive, tone: "text-muted-foreground", preview: "none" },
-  tar: { icon: FileArchive, tone: "text-muted-foreground", preview: "none" },
-  gz: { icon: FileArchive, tone: "text-muted-foreground", preview: "none" },
+  zip: { icon: FileZip, tone: "text-muted-foreground", preview: "none" },
+  tar: { icon: FileZip, tone: "text-muted-foreground", preview: "none" },
+  gz: { icon: FileZip, tone: "text-muted-foreground", preview: "none" },
   txt: { icon: FileText, tone: "text-muted-foreground", preview: "none" },
-  mp4: { icon: Film, tone: "text-muted-foreground", preview: "none" },
-  mkv: { icon: Film, tone: "text-muted-foreground", preview: "none" },
-  mp3: { icon: Music, tone: "text-muted-foreground", preview: "none" },
+  mp4: { icon: FilmStrip, tone: "text-muted-foreground", preview: "none" },
+  mkv: { icon: FilmStrip, tone: "text-muted-foreground", preview: "none" },
+  mp3: { icon: MusicNotes, tone: "text-muted-foreground", preview: "none" },
 };
 
 const GENERIC: Presentation = {

@@ -2,8 +2,8 @@
 /**
  * Header: brand, search trigger, repo link and theme control.
  * Sidebar toggles: hamburger (mobile) + collapse (desktop).
+ * Icons are Phosphor (regular weight), inlined as SVG paths.
  */
-import { Github, PanelLeft, Search } from "lucide-react";
 import { SITE } from "@/lib/config";
 import { withBase } from "@/lib/routes";
 import ThemeToggle from "@/components/ThemeToggle.tsx";
@@ -14,6 +14,16 @@ export interface Props {
 }
 
 const { route = "/" } = Astro.props;
+
+/** Phosphor icon helper: fill-based paths on the 256 grid. */
+const phosphor = (paths: string, cls: string) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" class="${cls}" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">${paths}</svg>`;
+const P = {
+  sidebar: '<path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM40,56H80V200H40ZM216,200H96V56H216V200Z"/>',
+  terminal: '<path d="M117.31,134l-72,64a8,8,0,1,1-10.63-12L100,128,34.69,70A8,8,0,1,1,45.32,58l72,64a8,8,0,0,1,0,12ZM216,184H120a8,8,0,0,0,0,16h96a8,8,0,0,0,0-16Z"/>',
+  search: '<path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>',
+  github: '<path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"/>',
+};
 ---
 
 <header class="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/80 px-4 backdrop-blur sm:px-6">
@@ -21,21 +31,23 @@ const { route = "/" } = Astro.props;
     id="sidebar-toggle-mobile"
     aria-label="Open explorer"
     class="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground lg:hidden"
+    set:html={phosphor(P.sidebar, "size-[18px]")}
   >
-    <PanelLeft class="size-[18px]" />
   </button>
 
   <button
     id="sidebar-toggle-desktop"
     aria-label="Toggle explorer"
     class="hidden h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground lg:inline-flex"
+    set:html={phosphor(P.sidebar, "size-[18px]")}
   >
-    <PanelLeft class="size-[18px]" />
   </button>
 
   <a href={withBase("/")} class="flex min-w-0 items-center gap-2.5">
-    <span class="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
-      <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 17 6-6-6-6"/><path d="M12 19h8"/></svg>
+    <span
+      class="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground"
+      set:html={phosphor(P.terminal, "size-4")}
+    >
     </span>
     <span class="truncate text-sm font-semibold tracking-tight">
       {SITE.title}
@@ -43,21 +55,22 @@ const { route = "/" } = Astro.props;
   </a>
 
   <div class="ml-auto flex items-center gap-1.5">
+    <!-- Navbar search trigger styled like the palette input row -->
     <button
       id="search-trigger"
       type="button"
-      class="hidden h-8 items-center gap-2 rounded-md border border-input bg-transparent px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:flex"
+      class="hidden h-9 w-64 items-center gap-2 rounded-md border border-input bg-transparent px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:flex"
     >
-      <Search class="size-3" />
-      Search
-      <kbd class="ml-2 rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] font-medium">⌘K</kbd>
+      <Fragment set:html={phosphor(P.search, "size-4 shrink-0 opacity-50")} />
+      <span class="flex-1 truncate text-left">Search documents...</span>
+      <kbd class="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] font-medium">⌘K</kbd>
     </button>
     <button
       id="search-trigger-mobile"
       aria-label="Search"
       class="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:hidden"
+      set:html={phosphor(P.search, "size-[18px]")}
     >
-      <Search class="size-[18px]" />
     </button>
 
     <a
@@ -66,8 +79,8 @@ const { route = "/" } = Astro.props;
       rel="noopener noreferrer"
       aria-label="GitHub repository"
       class="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+      set:html={phosphor(P.github, "size-[18px]")}
     >
-      <Github class="size-[18px]" />
     </a>
 
     <ThemeToggle client:load />
