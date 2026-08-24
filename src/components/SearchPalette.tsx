@@ -12,7 +12,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandShortcut,
 } from "@/components/ui/command";
 import { BASE } from "@/lib/routes";
 
@@ -168,19 +167,6 @@ export function SearchPalette() {
           </CommandGroup>
         )}
       </CommandList>
-
-      {/* Footer hints, shadcn search-dialog style */}
-      <div className="flex items-center gap-3 border-t px-4 py-2 text-xs text-muted-foreground">
-        <span className="inline-flex items-center gap-1.5">
-          <kbd className="rounded border bg-muted px-1 font-mono">↑↓</kbd>
-          Navigate
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <kbd className="rounded border bg-muted px-1 font-mono">↵</kbd>
-          Open
-        </span>
-        <CommandShortcut>ESC to close</CommandShortcut>
-      </div>
     </CommandDialog>
   );
 }
