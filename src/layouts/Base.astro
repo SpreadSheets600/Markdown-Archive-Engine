@@ -69,11 +69,6 @@ const bootScript = `
           <FileTree tree={tree} currentId={currentId} />
         </nav>
       </div>
-      <div class="shrink-0 border-t border-border px-4 py-3">
-        <p class="text-xs text-muted-foreground">
-          Markdown-first archive
-        </p>
-      </div>
     </aside>
 
     <!-- Mobile sidebar (sheet) -->
@@ -117,11 +112,6 @@ const bootScript = `
     <div id="main-shell" class="flex min-h-svh flex-col lg:pl-64">
       <Header route={currentId ? `/${currentId}` : "/"} />
       <slot />
-      <footer class="border-t border-border py-6">
-        <p class="text-center text-xs text-muted-foreground">
-          {SITE.title} · Built with Astro &amp; shadcn/ui
-        </p>
-      </footer>
     </div>
 
     <SearchPalette client:idle />
