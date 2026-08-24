@@ -122,6 +122,6 @@ Layout:
 
 Next steps:
     cd $TARGET/.engine && npm run dev   # live preview at localhost:4321
-    Write Markdown next to README.md, then push main to GitHub —
+    Write Markdown next to README.md, then push main to GitHub -
     Actions builds and publishes the site automatically.
 EOF

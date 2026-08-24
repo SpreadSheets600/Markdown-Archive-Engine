@@ -1,7 +1,7 @@
 # Markdown Archive Engine
 
 A content-agnostic site engine that turns any folder of Markdown into a
-polished documentation website — Astro + React + shadcn/ui, with a
+polished documentation website - Astro + React + shadcn/ui, with a
 file-tree explorer, ⌘K full-text search, syntax-highlighted code panes,
 and light/dark theming.
 
@@ -49,7 +49,7 @@ subfolder next to your Markdown):
 ```bash
 cd .engine
 npm install
-npm run dev      # live preview — reads content from ..
+npm run dev      # live preview - reads content from ..
 npm run build    # astro build + pagefind index → dist/
 npm run preview  # serve the built output
 ```
@@ -81,7 +81,7 @@ the installer:
    `.github/workflows/docs.yml`.
 2. Enable GitHub Pages from the `gh-pages` branch.
 
-That's it — the workflow checks out this repository directly. Pin `ref:`
+That's it - the workflow checks out this repository directly. Pin `ref:`
 to a tag (e.g. `v1`) to freeze the engine version. No content changes are
 required: relative `.md` links between documents are rewritten to site
 routes automatically at build time, anchors included.
@@ -93,7 +93,7 @@ routes automatically at build time, anchors included.
 | File-tree explorer | Collapsible sidebar, persisted state, active-page highlight; sheet drawer on mobile |
 | Full-text search | Pagefind index built at deploy time; ⌘K / Ctrl+K, header & mobile buttons, highlighted excerpts |
 | Code blocks | Shiki dual-theme highlighting (github-light / github-dark), copy buttons, no line wrapping |
-| Theming | Pure shadcn/ui neutral palette, light/dark/system toggle, lucide icons only |
+| Theming | Pure shadcn/ui neutral palette, light/dark/system toggle, Phosphor icons only |
 | Navigation | Scroll-spy TOC, breadcrumbs, prev/next links, custom 404 |
 | Assets | Images/PDFs/archives copied into the tree as rich preview cards |
 | Homepage | The root `README.md` renders as `/`; it doubles as the repo README |
@@ -133,18 +133,18 @@ AGENTS.md               Playbook for AI coding agents working on this repo
 
 ## Troubleshooting
 
-**404 on every page after deploying** — `base` doesn't match the repo
+**404 on every page after deploying** - `base` doesn't match the repo
 name, or Pages serves from the wrong branch. Re-check `.contentdir` /
 workflow env and Pages settings.
 
-**Search says "index unavailable"** — the deploy ran `astro build`
+**Search says "index unavailable"** - the deploy ran `astro build`
 without the Pagefind step. Always deploy with `npm run build` (it chains
 `pagefind --site dist`).
 
-**Links break when I move a file** — update the Markdown links pointing
+**Links break when I move a file** - update the Markdown links pointing
 at it; routes mirror folder structure exactly.
 
-**Local dev shows old content** — the engine caches Astro's content
+**Local dev shows old content** - the engine caches Astro's content
 layer; delete `.astro/` and restart `npm run dev`.
 
 ## Versioning & releases
@@ -155,4 +155,4 @@ live site. See `AGENTS.md` for the release procedure.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).

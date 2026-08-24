@@ -12,7 +12,7 @@ const ignoreDirs = [
 /**
  * The archive is Markdown-first: every .md file in the repository root
  * (at any depth) is a document. README.md files act as the index of
- * their folder, and the root README.md becomes the homepage — it doubles
+ * their folder, and the root README.md becomes the homepage - it doubles
  * as the GitHub repository README.
  */
 const docs = defineCollection({

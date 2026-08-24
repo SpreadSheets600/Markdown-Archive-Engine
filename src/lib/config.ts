@@ -5,9 +5,9 @@ import { getContentDir, getSiteUrl, getSiteBase } from "./content-dir.mjs";
 /**
  * Central site configuration.
  *
- * The archive's identity is derived from the content root's README.md —
+ * The archive's identity is derived from the content root's README.md -
  * the first `#` heading becomes the site title and the first paragraph
- * becomes the description — so every content repository automatically
+ * becomes the description - so every content repository automatically
  * gets its own branding. Override with SITE_NAME / SITE_TAGLINE env
  * vars or a `name=` directive in `.contentdir`.
  */

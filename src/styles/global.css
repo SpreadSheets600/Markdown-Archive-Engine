@@ -216,7 +216,7 @@ body {
   font-weight: var(--shiki-dark-font-weight, inherit);
 }
 
-/* Copy button injected per pane — pure CSS show/hide */
+/* Copy button injected per pane - pure CSS show/hide */
 .code-copy {
   position: absolute;
   top: 8px;

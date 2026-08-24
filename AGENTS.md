@@ -1,4 +1,4 @@
-# AGENTS.md — Playbook for AI Coding Agents
+# AGENTS.md - Playbook for AI Coding Agents
 
 This file is written for autonomous coding agents (Claude Code, Codex,
 Cursor, Copilot Workspace, …) that maintain **markdown-archive-engine**
@@ -16,7 +16,7 @@ There are always (at least) two repositories:
 
 | Repo | Branch | Contains |
 | --- | --- | --- |
-| Content repo (e.g. `Operating-Systems-Programs`) | `main` | Markdown, images, PDFs — nothing else |
+| Content repo (e.g. `Operating-Systems-Programs`) | `main` | Markdown, images, PDFs - nothing else |
 | Content repo | `gh-pages` | Build output; written only by CI |
 | This engine (`markdown-archive-engine`) | `main` (+ tags `vX.Y.Z`) | Astro site generator |
 
@@ -88,10 +88,10 @@ or rebuild with `SITE_BASE= npx astro build` for root-relative serving.
 
 ### 4.1 Pagefind ≥ 1.4 has no default export
 ```ts
-// WRONG — undefined at runtime, Vite also wraps it in __vitePreload
+// WRONG - undefined at runtime, Vite also wraps it in __vitePreload
 const pf = (await import("/pagefind/pagefind.js")).default;
 
-// RIGHT — named exports, native import
+// RIGHT - named exports, native import
 const pf = await import(/* @vite-ignore */ `${BASE}/pagefind/pagefind.js`);
 const options = await pf.options({ basePath: BASE });
 const res = await pf.search(query);
@@ -99,7 +99,7 @@ await pf.options({ basePath: BASE }); // once, before first search()
 ```
 Keep `@vite-ignore` on the dynamic import or the preload wrapper rewrites
 the URL and the module fails to load. Always deploy via `npm run build`
-so the `pagefind --site dist` step runs — a bare `astro build` produces a
+so the `pagefind --site dist` step runs - a bare `astro build` produces a
 site where search reports "index unavailable".
 
 ### 4.2 Shiki dual-theme output shape (light theme "loses" highlighting)
@@ -107,7 +107,7 @@ Astro emits light colors as **inline `color:` styles** plus only a
 `--shiki-dark` variable on each span, with classes
 `github-light github-dark`. Therefore:
 
-- Light mode needs **no CSS overrides** — inline styles are correct.
+- Light mode needs **no CSS overrides** - inline styles are correct.
 - Dark mode switches via:
   ```css
   .dark .doc-prose .astro-code { background-color: var(--shiki-dark-bg,#24292e) !important; }
@@ -116,13 +116,13 @@ Astro emits light colors as **inline `color:` styles** plus only a
     font-weight: var(--shiki-dark-font-weight, inherit);
   }
   ```
-- Never write `color: var(--shiki-light)` overrides — that variable is
+- Never write `color: var(--shiki-light)` overrides - that variable is
   not emitted, and `!important` on an empty var wipes all token colors.
 
 ### 4.3 Tailwind v4 `translate` property vs inline `transform`
 TW4's `-translate-x-full` compiles to the standalone CSS `translate`
 property. Inline `el.style.transform = "translateX(0)"` does NOT override
-it — both apply and compose, so panels stay hidden. Drive drawer/dialog
+it - both apply and compose, so panels stay hidden. Drive drawer/dialog
 positioning through data attributes + CSS instead:
 
 ```css
@@ -155,8 +155,10 @@ scoped component styles.
 
 ## 5. Conventions
 
-- **Icons:** lucide only (`lucide-react`; inline lucide SVG paths in
-  `.astro` templates). No emoji-as-icons, no other icon sets.
+- **Icons:** Phosphor only (`@phosphor-icons/react` in `.tsx`;
+  inline Phosphor regular-weight SVG paths - `viewBox="0 0 256 256"`,
+  `fill="currentColor"` - in `.astro` templates). No emoji-as-icons, no
+  other icon sets (lucide was removed).
 - **Color:** pure shadcn/ui neutral tokens (`background`, `foreground`,
   `muted`, `border`, …). No bespoke palette colors in components.
 - **Code blocks:** `white-space: pre` (never wrap), ligatures off,
@@ -165,7 +167,7 @@ scoped component styles.
 - **Search UI:** borderless input row, result rows show title → clamped
   excerpt with `<mark>` highlights → mono path line.
 - **Content repos:** docs live in their README/MIGRATING.md; keep them in
-  sync when engine behavior changes (e.g., we removed the `$` prompt —
+  sync when engine behavior changes (e.g., we removed the `$` prompt -
   update the docs the same release).
 
 ---
@@ -207,9 +209,9 @@ after every change.
 1. Ensure `main` contains only content (move tooling elsewhere or delete;
    add `.gitignore` for `.engine/`, `dist/`, `.astro/`).
 2. Copy `template/workflow.yml` → `.github/workflows/docs.yml`.
-3. Root `README.md` becomes the homepage — give it one `#` heading and
+3. Root `README.md` becomes the homepage - give it one `#` heading and
    curate links/index tables there.
-4. Push `main`; enable Pages from `gh-pages`. Done — links rewrite
+4. Push `main`; enable Pages from `gh-pages`. Done - links rewrite
    automatically, assets get preview cards, search indexes everything.
 
 ### 7.2 Upgrade a content repo to a new engine version
@@ -233,11 +235,11 @@ after every change.
 
 When production misbehaves:
 
-1. **Reproduce locally first** — same build command, same base path
+1. **Reproduce locally first** - same build command, same base path
    simulation (§3). Most "deploy bugs" are base-path mismatches.
 2. **Inspect emitted HTML**, not just rendered pixels: `grep` the built
    files for hrefs/classes/style attributes. Several bugs (§4.2, §4.4)
    are invisible in screenshots but obvious in markup.
-3. **Check computed styles** in the browser for CSS-variable failures —
+3. **Check computed styles** in the browser for CSS-variable failures -
    an invalid `var()` silently falls back to inheritance.
 4. One hypothesis per fix; verify with the §6 checklist after each.

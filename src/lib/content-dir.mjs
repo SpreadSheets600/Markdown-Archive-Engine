@@ -5,7 +5,7 @@ import path from "node:path";
  * Engine configuration, resolved from (in priority order):
  *   1. Environment variables (CONTENT_DIR, SITE_BASE, SITE_URL)
  *   2. A `.contentdir` file in the engine directory, written by
- *      install.sh / CI. Format — one directive per line:
+ *      install.sh / CI. Format - one directive per line:
  *          dir=/path/to/content     (or a bare path line)
  *          base=/repo-name          (GitHub Pages sub-path)
  *          url=https://owner.github.io
