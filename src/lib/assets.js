@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getContentDir, TOOLING_DIRS, TOOLING_FILES } from "@/lib/content-dir.mjs";
+import { folderKey } from "@/lib/tree";
 
 /**
  * Walks the repository and returns every publishable asset
@@ -27,6 +28,31 @@ export async function listAssets() {
       }
     }
     return acc;
+  };
+  return walk(getContentDir());
+}
+
+/**
+ * Maps slugified folder paths to their real on-disk paths,
+ * e.g. { "assignment/assignment-1": "Assignment/Assignment 1" }.
+ * Doc ids are slugified but asset paths keep their casing, so the
+ * sidebar needs this to display one merged folder with its real name.
+ */
+export async function listDirNames() {
+  const map = new Map();
+  const walk = async (dir, realRel = "", slugRel = "") => {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.name.startsWith(".")) continue;
+      if (!entry.isDirectory() || TOOLING_DIRS.has(entry.name)) continue;
+      const real = path.posix.join(realRel, entry.name);
+      const slug = slugRel
+        ? `${slugRel}/${folderKey(entry.name)}`
+        : folderKey(entry.name);
+      map.set(slug, real);
+      await walk(path.join(dir, entry.name), real, slug);
+    }
+    return map;
   };
   return walk(getContentDir());
 }

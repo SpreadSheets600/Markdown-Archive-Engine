@@ -5,7 +5,7 @@
  * current document start expanded. Rendered recursively.
  */
 import { routeForDoc } from "@/lib/routes";
-import { isReadme, sortTree, type SortedNode, type TreeNode } from "@/lib/tree";
+import { isReadme, folderKey, sortTree, type SortedNode, type TreeNode } from "@/lib/tree";
 
 export interface Props {
   tree: TreeNode;
@@ -54,10 +54,12 @@ function renderNode(node: SortedNode, name: string | null, depth: number, onPath
     out += `<div class="mt-0.5 flex flex-col gap-0.5">`;
   }
 
-  // Only the matching top-level folder starts expanded
+  // Only the matching top-level folder starts expanded.
+  // Folder display names keep on-disk casing ("Assignment 1") while the
+  // active id is slugified ("assignment-1"), so compare via folderKey.
   let matchedChild: SortedNode | null = null;
   for (const child of node.folders) {
-    if (onPath && activeParts[depth] === child.name && !matchedChild)
+    if (onPath && folderKey(activeParts[depth] ?? "") === folderKey(child.name) && !matchedChild)
       matchedChild = child;
   }
   for (const child of node.folders) {

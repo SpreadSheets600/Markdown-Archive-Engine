@@ -151,6 +151,15 @@ SearchPalette renders into a portal at `<body>` end. Any global CSS it
 needs must live in `global.css` (or be carried by TW utilities), not in
 scoped component styles.
 
+### 4.7 Doc ids are slugified, asset paths are not - never compare raw
+The glob loader slugifies collection ids (`Assignment/Assignment 1/...`
+becomes `assignment/assignment-1/...`) while `listAssets()` returns
+on-disk casing. Comparing the two raw caused every mixed-case folder to
+appear twice in the sidebar AND made AssetGrid's sibling match always
+fail (its trailing-slash mismatch hid that). Always compare folders and
+document dirs through `folderKey()` (`src/lib/tree.ts`); display the
+real-cased name from `listDirNames()` (`src/lib/assets.js`).
+
 ---
 
 ## 5. Conventions

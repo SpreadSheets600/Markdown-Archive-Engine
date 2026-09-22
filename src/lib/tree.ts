@@ -29,6 +29,19 @@ export interface SortedNode {
 /** Folder-index documents are ids ending in "readme". */
 export const isReadme = (name: string) => /^readme$/i.test(name);
 
+/**
+ * Normalizes one path segment to the key space Astro uses for
+ * content-collection ids (lowercase, runs of separators collapsed to
+ * "-"). Doc ids arrive slugified ("assignment-1") while asset paths keep
+ * their on-disk casing ("Assignment 1") - always compare folders through
+ * this function or the tree splits into duplicate nodes (§4.7).
+ */
+export const folderKey = (segment: string) =>
+  segment
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 const natural = (a: string, b: string) =>
   a.localeCompare(b, undefined, { numeric: true });
 

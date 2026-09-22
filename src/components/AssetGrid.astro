@@ -16,6 +16,7 @@ import {
   MusicNotes,
   BracketsCurly,
 } from "@phosphor-icons/react";
+import { folderKey } from "@/lib/tree";
 
 export interface Asset {
   /** Path relative to the repository root. */
@@ -33,8 +34,18 @@ export interface Props {
 
 const { assets, dir } = Astro.props;
 
+// dir comes from the slugified doc id ("assignment/assignment-1") while
+// asset paths keep on-disk casing ("Assignment/Assignment 1") - compare
+// through folderKey or attachments never match their document.
+const normDir = (p: string) => {
+  const clean = p.replace(/\/+$/, "");
+  return clean === "." || clean === ""
+    ? "."
+    : clean.split("/").map(folderKey).join("/");
+};
+
 const siblings = assets.filter(
-  (a) => (a.path.includes("/") ? a.path.replace(/[^/]+$/, "") : ".") === dir && !/readme\.md/i.test(a.name),
+  (a) => normDir(a.path.includes("/") ? a.path.replace(/[^/]+$/, "") : ".") === normDir(dir) && !/readme\.md/i.test(a.name),
 );
 
 type Presentation = {
